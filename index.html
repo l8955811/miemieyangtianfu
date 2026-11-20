@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你不是没天赋，你是卡在这一步</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&display=swap&text=%E4%B8%80%E4%B8%8D%E4%B9%9D%E4%BA%86%E4%BA%8B%E4%BA%94%E4%BA%BA%E4%BB%BD%E4%BD%8E%E4%BD%8F%E4%BD%93%E4%BD%A0%E5%83%8F%E5%85%A8%E5%85%AB%E5%85%B3%E5%86%8D%E5%87%BA%E5%88%BB%E5%89%AF%E5%8D%81%E5%8D%A1%E5%8E%86%E5%8F%A3%E5%8F%A6%E5%8F%B0%E5%90%84%E5%9C%A8%E5%A3%AB%E5%A4%96%E5%A4%9A%E5%A4%A7%E5%A4%A9%E5%A4%B9%E5%AD%90%E5%AE%B6%E5%AF%8C%E5%B0%8F%E5%B0%91%E5%B7%AE%E5%BA%97%E5%BE%80%E5%BE%88%E6%88%98%E6%88%B7%E6%8A%98%E6%8F%90%E6%94%B6%E6%96%97%E6%97%B6%E6%98%9F%E6%98%AF%E6%9C%9B%E6%A6%82%E6%AD%A3%E6%AD%A5%E6%B2%A1%E7%82%B9%E7%83%9F%E7%88%AA%E7%8E%A9%E7%94%B5%E7%94%BB%E7%9A%84%E7%9C%9F%E7%A4%BA%E7%A7%8D%E7%A8%BF%E7%AD%89%E7%AD%9D%E7%AE%B1%E7%AF%B7%E7%BB%8F%E7%BF%81%E8%8A%B1%E8%8D%89%E8%97%8F%E8%A2%AB%E8%AF%9D%E8%AF%B4%E8%B4%A8%E8%B5%8B%E8%BA%AB%E8%BF%87%E8%BF%99%E8%BF%9C%E9%81%93%E9%82%A3%E9%83%A8%E9%87%8C%E9%87%8F%E9%92%89%E9%95%9C%E9%95%BF%E9%9A%90%E9%9D%99%E9%9F%B3%E9%A3%8E%E9%B1%BC%EF%BC%8C" media="print" onload="this.media='all'">
+<style>
+/* Layout: one phone-width column, left-aligned. The sky behind it darkens chapter by
+   chapter and clears at the result, where each of the ten types brings its own colour.
+   The only drawing is a ten-step staircase with a lamp-coloured dot on the stuck step. */
+@property --bg   {syntax:'<color>';inherits:true;initial-value:#ECEFF0}
+@property --orb1 {syntax:'<color>';inherits:true;initial-value:#FFD2AE}
+@property --orb2 {syntax:'<color>';inherits:true;initial-value:#BCD8F0}
+:root{
+  --bg:#ECEFF0;            /* porcelain, slightly cool */
+  --ink:#161A2B;           /* blue-black ink */
+  --soft:#4C5266;          /* secondary text */
+  --line:rgba(22,26,43,.18);
+  --fill:rgba(255,255,255,.6);
+  --orb1:#FFD2AE;          /* afternoon apricot */
+  --orb2:#BCD8F0;          /* afternoon sky */
+  --lamp:#F0A020;          /* the dot: where you are */
+  --accent:#161A2B;        /* replaced by the result type's colour */
+  --display:"Noto Serif SC","Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;
+  --read:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;
+  --ui:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","MiSans","Microsoft YaHei",sans-serif;
+  color-scheme:light;
+}
+body[data-scene="dusk"]{--bg:#E9E2E7;--orb1:#F3A9B6;--orb2:#F6C68C}
+body[data-scene="night"]{--bg:#222949;--ink:#EEF0F8;--soft:#B2B8D2;--line:rgba(238,240,248,.24);--fill:rgba(255,255,255,.07);--orb1:#5A4BB5;--orb2:#1F7C8C;color-scheme:dark}
+body[data-scene="deep"]{--bg:#101327;--ink:#EEF0F8;--soft:#A9AFCA;--line:rgba(238,240,248,.22);--fill:rgba(255,255,255,.06);--orb1:#2C2F7A;--orb2:#4A3320;color-scheme:dark}
+body[data-scene="dawn"]{--bg:#F2F1EE}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--read);font-size:17px;line-height:1.8;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  transition:--bg 1.2s ease,--orb1 1.2s ease,--orb2 1.2s ease,color .6s ease;
+}
+.sky{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(78% 48% at 94% 0%,var(--orb1) 0%,transparent 72%),
+    radial-gradient(88% 52% at 0% 100%,var(--orb2) 0%,transparent 72%),
+    var(--bg);
+}
+.sky::after{
+  content:"";position:absolute;inset:0;opacity:.22;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{position:relative;z-index:1;max-width:30rem;margin:0 auto;padding:28px 24px 64px;min-height:100%}
+.view{display:none}
+.view.on{display:block}
+.view.anim{animation:fade .55s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+p{margin:0}
+h1,h2,h3{margin:0;text-wrap:balance}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* shared controls */
+.btn{
+  appearance:none;border:0;border-radius:999px;background:var(--ink);color:var(--bg);
+  font:600 1.05rem/1 var(--read);padding:18px 30px;min-height:56px;width:100%;cursor:pointer;
+  transition:transform .15s ease;
+}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.link{
+  appearance:none;background:none;border:0;padding:10px 0;cursor:pointer;
+  font:.88rem var(--ui);color:var(--soft);
+  text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line);
+}
+.fine{font:.78rem/1.7 var(--ui);color:var(--soft)}
+
+/* intro */
+.kicker{font:500 .85rem var(--ui);color:var(--soft)}
+.title{font:900 clamp(2.15rem,10.6vw,3rem)/1.22 var(--display);margin-top:10px;letter-spacing:.01em}
+.stair{margin-top:30px}
+.stair svg{display:block;width:100%;height:auto;overflow:visible}
+.st-walk{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+.st-ahead{fill:none;stroke:var(--ink);stroke-opacity:.38;stroke-width:1.2;stroke-dasharray:3 4}
+.st-main{fill:none;stroke:var(--accent);stroke-width:3.6;stroke-linecap:round}
+.st-dot{fill:var(--lamp)}
+.st-halo{fill:var(--lamp);opacity:.26}
+.st-sec{fill:var(--bg);stroke:var(--ink);stroke-width:1.5}
+.hop{transform-box:fill-box;animation:hop 3.4s cubic-bezier(.4,0,.2,1) infinite}
+@keyframes hop{0%,22%{transform:translate(0,0)}36%{transform:translate(8px,-17px)}45%{transform:translate(12px,-11px)}60%,100%{transform:translate(0,0)}}
+.cap{font:.82rem var(--ui);color:var(--soft);margin-top:10px}
+.prose{display:grid;gap:14px;margin-top:28px}
+.field{margin-top:34px}
+.field label{display:block;font:500 .82rem var(--ui);color:var(--soft);margin-bottom:4px}
+.field input{
+  width:100%;border:0;border-bottom:1.5px solid var(--ink);border-radius:0;background:transparent;
+  font:1.1rem var(--read);color:var(--ink);padding:8px 0 10px;outline:0;
+}
+.field input:focus-visible{box-shadow:0 2px 0 var(--ink)}
+.field input::placeholder{color:var(--soft);opacity:.75}
+.start{display:grid;gap:6px;margin-top:26px;justify-items:start}
+.intro-note{margin-top:22px;font:.86rem/1.7 var(--ui);color:var(--soft)}
+#v-intro .fine{margin-top:34px;padding-top:16px;border-top:1px solid var(--line)}
+
+/* chapter card */
+.ch-no{font:500 .9rem var(--ui);color:var(--soft);padding-top:17vh}
+.ch-title{font:900 clamp(2.3rem,11.5vw,3.2rem)/1.2 var(--display);margin-top:8px}
+.ch-lead{margin-top:22px;font-size:1.08rem}
+.ch-meta{font:.85rem var(--ui);color:var(--soft);margin:20px 0 30px}
+
+/* quiz */
+.qbar{display:flex;justify-content:space-between;align-items:center;min-height:44px}
+.qbar .link[disabled]{visibility:hidden}
+.count{font:.88rem var(--ui);color:var(--soft);font-variant-numeric:tabular-nums}
+.count b{color:var(--ink);font-weight:600}
+.track{height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--ink);transition:width .4s ease}
+.q-ch{font:.82rem var(--ui);color:var(--soft);margin-top:30px}
+.swap{animation:rise .42s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.q-text{font:600 1.32rem/1.62 var(--read);margin-top:12px}
+.opts{display:grid;gap:12px;margin-top:26px}
+.opt{
+  appearance:none;text-align:left;cursor:pointer;
+  border:1px solid var(--line);background:var(--fill);color:var(--ink);
+  font:1rem/1.62 var(--read);padding:15px 18px;border-radius:16px;
+  transition:background .18s,color .18s,border-color .18s;
+}
+.opt.picked{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+@media (hover:hover){.opt:hover{border-color:var(--ink)}}
+.q-hint{font:.86rem var(--ui);color:var(--soft);margin-top:12px}
+.q-say{font:600 1.42rem/1.66 var(--read);margin-top:10px}
+.scale{display:flex;align-items:center;margin-top:38px}
+.dot{appearance:none;background:none;border:0;padding:0;flex:1;height:60px;display:grid;place-items:center;cursor:pointer}
+.dot i{display:block;width:var(--s);height:var(--s);border-radius:50%;border:1.5px solid var(--ink);transition:background .18s,transform .18s}
+.dot.picked i{background:var(--ink);transform:scale(1.1)}
+@media (hover:hover){.dot:hover i{background:var(--line)}.dot.picked:hover i{background:var(--ink)}}
+.scale-ends{display:flex;justify-content:space-between;font:.8rem var(--ui);color:var(--soft);margin-top:4px}
+.scale-now{text-align:center;font:600 1.02rem var(--read);min-height:1.9em;margin-top:16px}
+
+/* analysing */
+.an{list-style:none;margin:0;padding:24vh 0 0;display:grid;gap:18px}
+.an li{font:600 1.3rem/1.5 var(--read);opacity:.2;transition:opacity .7s ease}
+.an li.on{opacity:1}
+
+/* result */
+.peek{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 14px;margin-bottom:18px;border:1px solid var(--line);border-radius:999px;font:.84rem var(--ui);background:var(--fill)}
+.who{display:flex;justify-content:space-between;gap:12px;font:.85rem var(--ui);color:var(--soft);font-variant-numeric:tabular-nums}
+.r-gate{font:600 1.05rem var(--read);margin-top:28px}
+.r-name{font:900 clamp(2.7rem,14.4vw,4.2rem)/1.12 var(--display);color:var(--accent);margin-top:6px}
+.r-tag{font-size:1.14rem;line-height:1.7;margin-top:14px}
+.r-level{display:inline-flex;gap:12px;align-items:baseline;margin-top:20px;padding:7px 16px;border:1px solid var(--line);border-radius:999px;font:.85rem var(--ui);background:var(--fill)}
+.r-level b{font-weight:700;font-variant-numeric:tabular-nums}
+.gates{display:grid;grid-template-columns:repeat(10,1fr);margin-top:8px}
+.gates span{display:flex;flex-direction:column;align-items:center;gap:5px;font:.72rem var(--ui);color:var(--soft)}
+.gates i{font-style:normal;font-variant-numeric:tabular-nums}
+.gates b{writing-mode:vertical-rl;font:500 .84rem/1 var(--read);letter-spacing:.14em}
+.gates .is-main{color:var(--accent)}
+.gates .is-main b{font-weight:900}
+.gates .is-sec{color:var(--ink)}
+.legend{display:flex;gap:18px;margin-top:14px;font:.78rem var(--ui);color:var(--soft)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:50%;background:var(--lamp)}
+.legend i.ring{background:transparent;border:1.5px solid var(--ink)}
+.lv-text{margin-top:22px}
+.sec{margin-top:46px}
+.sec h3{font:900 1.3rem/1.3 var(--display);margin-bottom:12px}
+.sec p + p{margin-top:12px}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{padding:13px 0;border-top:1px solid var(--line)}
+.rows li:last-child{border-bottom:1px solid var(--line)}
+.sec.root{background:var(--ink);color:var(--bg);border-radius:22px;padding:26px 24px 28px}
+.sec.root p{font-size:1.08rem}
+.sub-name{font:.9rem var(--ui);color:var(--soft)}
+.sub-name b{display:block;font:900 1.5rem/1.3 var(--display);color:var(--ink);margin-top:2px}
+.bars{display:grid;gap:2px}
+.bar-row{display:grid;grid-template-columns:1.4em 2.6em 1fr 2.4em;gap:10px;align-items:center;font:.86rem var(--ui);padding:6px 0;font-variant-numeric:tabular-nums}
+.bar-row span:first-child{color:var(--soft)}
+.bar-row span:last-child{text-align:right}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--ink)}
+.bar-row.main{font-weight:700}
+.bar-row.main .bar i{background:var(--accent)}
+.pass{margin-top:16px}
+.note{margin-top:16px;font:.84rem/1.75 var(--ui);color:var(--soft)}
+.quote{margin:50px 0 0;padding:4px 0 4px 20px;border-left:4px solid var(--accent);font:600 1.38rem/1.7 var(--read)}
+.actions{display:grid;gap:12px;margin-top:40px}
+.others{display:grid;margin-top:6px}
+.other{appearance:none;background:none;border:0;border-top:1px solid var(--line);text-align:left;padding:15px 0;cursor:pointer;display:grid;gap:2px}
+.other:last-child{border-bottom:1px solid var(--line)}
+.other b{font:900 1.12rem/1.4 var(--display)}
+.other small{font:.84rem/1.6 var(--ui);color:var(--soft)}
+.other em{font:normal .76rem var(--ui);color:var(--soft)}
+#v-result .fine{margin-top:40px}
+
+/* card sheet */
+.sheet{position:fixed;inset:0;z-index:10;background:rgba(16,19,39,.82);display:grid;place-items:center;padding:20px}
+.sheet[hidden]{display:none}
+.sheet-in{display:grid;gap:14px;justify-items:center;max-width:24rem;width:100%}
+.sheet img{display:block;max-width:100%;max-height:68vh;border-radius:14px;background:#F2F1EE}
+.sheet p{color:#EEF0F8;font:.9rem/1.6 var(--ui);text-align:center}
+.sheet .btn{background:#EEF0F8;color:#161A2B}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body data-scene="day">
+<div class="sky" aria-hidden="true"></div>
+<main class="wrap">
+
+  <section class="view on" id="v-intro">
+    <p class="kicker">天赋卡点测试</p>
+    <h1 class="title">你不是没天赋，<br>你是卡在这一步</h1>
+    <div class="stair" id="introStair"></div>
+    <p class="cap">从「我好像可以」到「真的做成」，中间有十道关。</p>
+    <div class="prose">
+      <p>天赋测试你大概做过不少。结果都挺好听，然后生活照旧。</p>
+      <p>很多人有天赋，只是在其中一道关前站了很多年，久到以为那就是自己的上限。</p>
+      <p>这份测试不猜你的天赋是什么。它只找一件事：你停在了哪。</p>
+    </div>
+    <form id="startForm" novalidate>
+      <div class="field">
+        <label for="nick">怎么称呼你</label>
+        <input id="nick" name="nick" type="text" maxlength="12" autocomplete="off" placeholder="会写在报告上，可以不填">
+      </div>
+      <div class="start">
+        <button class="btn" type="submit" id="startBtn">开始测试</button>
+        <button class="link" type="button" id="resumeBtn" hidden></button>
+      </div>
+    </form>
+    <p class="intro-note">一共 35 道题，大约 6 分钟。凭第一反应选，选「其实是这样」的那个。</p>
+    <p class="fine">这是一份帮你看清自己的趣味测试，不是专业心理测评，结果不构成任何诊断。你的回答只保存在自己的浏览器里。</p>
+  </section>
+
+  <section class="view" id="v-chapter">
+    <p class="ch-no" id="chNo"></p>
+    <h2 class="ch-title" id="chTitle"></h2>
+    <p class="ch-lead" id="chLead"></p>
+    <p class="ch-meta" id="chMeta"></p>
+    <button class="btn" type="button" id="chGo">进入这一章</button>
+  </section>
+
+  <section class="view" id="v-quiz">
+    <header class="qbar">
+      <button class="link" type="button" id="backBtn">上一题</button>
+      <span class="count"><b id="qNow">1</b> / <span id="qAll">35</span></span>
+    </header>
+    <div class="track" aria-hidden="true"><i id="trackFill"></i></div>
+    <p class="q-ch" id="qCh"></p>
+    <div id="qBody"></div>
+  </section>
+
+  <section class="view" id="v-analyze" aria-live="polite">
+    <ul class="an">
+      <li>把 35 个回答放回十道关口</li>
+      <li>找你停留最久的那一步</li>
+      <li>写你的卡点报告</li>
+    </ul>
+  </section>
+
+  <section class="view" id="v-result"></section>
+</main>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-label="结果卡片">
+  <div class="sheet-in">
+    <img id="cardImg" alt="你的卡点结果卡片">
+    <p>长按图片保存到相册。存不了的话，直接截图也可以。</p>
+    <button class="btn" type="button" id="sheetClose">关闭</button>
+  </div>
+</div>
+
+<script id="data">
+/* ---------- data and scoring (no DOM) ---------- */
+var GATES = ["S","L","W","C","F","O","D","I","T","Z"];
+
+var T = {
+S:{no:1,gate:"听见",name:"静音电台",a:"#4A6289",o1:"#A9BBD6",o2:"#D6DEEA",
+  tag:"你把所有人的频道都调得很清楚，除了自己的。",
+  p:["你很会读空气。别人想要什么、期待什么、哪个选择比较稳妥，你几乎不用想就知道。这是很强的能力，代价是：接收别人的音量开到了最大，你自己的那个频道就被挤成了静音。",
+     "所以被问到「你喜欢什么」的时候，你其实是在检索哪个答案比较对。久了，你开始怀疑自己是不是真的没什么想要的。"],
+  m:["点菜、选电影、定行程，你最常说的是「都行，看你」。",
+     "专业、工作、城市，几次大选择回头看都很合理，却说不上是不是你要的。",
+     "独处时偶尔冒出一个念头，还没看清，就被「这不现实」按掉了。"],
+  root:"你有想要的东西。只是你对自己的信号太久没回应，它就不再大声了。喜好像肌肉，长期不用，会弱到感觉不到。",
+  gift:"你的敏锐是真的。能听见别人没说出口的话，在任何跟人有关的事上都稀缺。这副耳朵只是还没朝里用过。",
+  tips:["这周每天记一样「让我多停留了三秒」的东西。不评价有没有用，只记。",
+        "下次说「都行」之前停两秒，先在心里选一个，哪怕不说出口。",
+        "留意你的嫉妒。你羡慕谁，往往比你说得出的「喜欢」更诚实。"],
+  quote:"你一直有声音，只是太久没给自己递话筒。",
+  sec:"你有时并不确定，眼下卡着你的这件事，到底是不是你自己想要的。先弄清这一点，后面的力气才花得值。",
+  pass:"你清楚自己想要什么，这比你以为的少见。"},
+
+L:{no:2,gate:"蓄力",name:"低电量战士",a:"#8E6212",o1:"#F0C987",o2:"#CBD8BA",
+  tag:"每天的电，都先被别的事用光了。",
+  p:["你有想做的事，甚至知道第一步是什么。可每天把必须做的做完，轮到自己的时间，电量只剩 1%。于是你躺下刷手机，一边刷一边骂自己。",
+     "最耗你的还不是累，是那份自责。你把「没力气」读成了「不自律」，在已经见底的电量上又扣了一笔。"],
+  m:["计划表上留给自己的那一格，永远最先被挤掉。",
+     "报复性熬夜。白天不属于你，只好从睡眠里偷一点回来。",
+     "放假第一天什么都不想干，然后为「浪费了一天」难受。"],
+  root:"天赋要有余裕才长得出来。你缺的是一块没被征用的电量，意志力你并不缺。在低电量下硬逼自己，只会把喜欢的事也变成另一项待办。",
+  gift:"能把那么多该做的都扛下来，说明你的耐力和责任感远超你对自己的评价。这股劲只要有一小部分留给自己，就很可观。",
+  tips:["先别加任务，先减一件。这周找出一件做到六十分就够的事，把省下的力气留着。",
+        "把想做的事切成两分钟的版本，放在一天里电量最高的时候，别放在最后。",
+        "把「躺着」正式排进日程。被允许的休息才充得进电。"],
+  note:"如果你已经很长时间提不起劲、睡不好，影响到了生活，这就超出了一份测试能说的范围，值得找医生或心理咨询师聊聊。",
+  quote:"你一直在用备用电源过日子，这不叫懒。",
+  sec:"很多时候方法没有错，只是你已经太累了。电量不够的时候，别急着怪自己不努力。",
+  pass:"你给自己留了余裕，电量管理得不错。"},
+
+W:{no:3,gate:"出发",name:"等风的风筝",a:"#1B7690",o1:"#9ED3E6",o2:"#CFE9D9",
+  tag:"线一直攥在手里，在等一阵足够好的风。",
+  p:["你有想法，而且想得很细。怎么开始、会遇到什么、哪个时机最好，这件事你在脑子里推演过很多遍。你只是觉得现在还不行：等忙完这阵，等状态好一点，等想得再清楚一点。",
+     "那阵刚刚好的风一直没来。等的这些年里，这件事在你心里越来越重，越来越郑重，也就越来越不敢随便开始。"],
+  m:["「等……之后我就……」是你的高频句式。",
+     "做过很完整的计划，完整到执行它本身成了压力。",
+     "看别人草率地开始，心里嘀咕「这也行」，过段时间发现人家已经走出去很远。"],
+  root:"你等的其实是一份「不会失败」的保证。只要还没开始，「我本可以」就完好无损。开始，意味着要拿它去冒险。",
+  gift:"你想得深、看得远，对一件事的全貌有超出常人的预判。这是规划者的天赋，只差一个粗糙的、不体面的起点。",
+  tips:["把「开始」的定义改小。今天只做十五分钟最烂的版本，做完就算赢。",
+        "定一个「不许准备日」。这一天只许动手，不许查资料，不许做计划。",
+        "把你的「等……之后」写下来，问一句：这个条件上一次出现是什么时候？"],
+  quote:"风不会先来。你跑起来，才有风。",
+  sec:"你总想等条件再好一点。这给了主卡点一个很体面的理由，也让它更难被发现。",
+  pass:"你不太需要等，想到就能动。"},
+
+C:{no:4,gate:"动手",name:"收藏夹富翁",a:"#876509",o1:"#F3D98B",o2:"#F6E6C2",
+  tag:"你囤的其实是「总有一天我会」的安心。",
+  p:["你的收藏夹、网盘、课程列表，加起来够开一所学校。你是真的爱学，也是真的认真：笔记漂亮，框架清楚。",
+     "但你心里有数，存下的那一刻最踏实，之后很少再打开。学是安全的，只会进步；做是危险的，会当场露出自己还不行。于是你留在安全的这一边，越学越多，越多越觉得还没学够。"],
+  m:["遇到问题先想「有没有课」，很少先试一试。",
+     "笔记软件换过好几个，每次迁移都很有成就感。",
+     "教程看到一半觉得「懂了」，就没有然后了。"],
+  root:"输入给你「我在变好」的感觉，却让你绕开了真正让人变好的那件事：做出一个烂东西，然后改它。",
+  gift:"你的吸收力和归纳力是真本事。你脑子里存的东西比你以为的值钱，只是还没被用过。",
+  tips:["定一条「一进一出」。每存一个新教程，先用掉一个旧的，哪怕只照着做十分钟。",
+        "收藏夹停更七天。想存的时候，改成当场动手做一个最小的版本。",
+        "列一张「我做出过什么」的清单。很短也没关系，从今天开始往上加。"],
+  quote:"你缺的从来不是下一门课，是第一个难看的作品。",
+  sec:"你习惯用「再学一点」来推迟动手。这一招很顺手，也很隐蔽。",
+  pass:"你习惯边做边学，不靠囤来壮胆。"},
+
+F:{no:5,gate:"坚持",name:"烟花体质",a:"#BC3559",o1:"#F6A6B8",o2:"#FBC79A",
+  tag:"点燃得比谁都快，也比谁都亮，就是不太长。",
+  p:["你的开始总是很漂亮。心动、下单、立 flag，前三天冲得飞快，那种「这次不一样」的感觉是真的。然后某一天，新鲜感退了，进步变慢了，这件事开始需要熬。你在那里松了手，又很快被下一件发光的事点燃。",
+     "你大概给自己贴过「三分钟热度」。可你试过的每件事，都停在同一个位置：好玩的部分刚结束，真正的积累刚要开始。"],
+  m:["家里有不止一套「全新仅拆封」的装备。",
+     "打卡记录的形状都很像：前面密，后面疏，然后断掉。",
+     "想捡回一件旧爱好，发现又要从头来，更不想碰了。"],
+  root:"你把「不再兴奋」当成了「不适合我」。几乎所有天赋，都藏在那段不好玩的平台期后面。你每次都走到了门口，然后折返。",
+  gift:"你的启动力和感受力，很多人羡慕不来。敢开始、容易被打动，是创造者的底色。你只需要学会多待一小会儿。",
+  tips:["下次想放弃时，用「再做五次」的规则。五次之后还想走，就心安理得地走。",
+        "从放下的旧爱好里挑一件捡回来，先别开新的。",
+        "把目标从「每天坚持」改成「断了就接上」。可以断，但别因为断了就整个扔掉。"],
+  quote:"你从不缺开始的勇气，只缺一次「无聊了也没走」的经历。",
+  sec:"新鲜感一退，你的劲就容易跟着散。很多事你其实只差多待一小会儿。",
+  pass:"新鲜感退了，你也待得住。"},
+
+O:{no:6,gate:"聚焦",name:"八爪鱼玩家",a:"#6546BE",o1:"#BBA7EE",o2:"#9CC8F0",
+  tag:"每只手都抓着一样喜欢的，所以哪只都腾不出来用力。",
+  p:["你兴趣广，上手快。别人学一个月的东西，你一周就像模像样。朋友说你什么都会，你听着高兴，心里有点虚，因为你知道每一样都停在了「还不错」。",
+     "让你只选一个，你是真的难受：选了这个，像是亲手关掉其他九个自己。于是你全都抓着，每样分一点时间，每样都在原地。"],
+  m:["自我介绍里的斜杠越来越多，没有一个敢写在第一位。",
+     "上手期飞快，一到要死磕的阶段，就觉得另一个好像更适合。",
+     "羡慕那种十年只做一件事的人，又觉得自己做不到。"],
+  root:"你怕的是「选择等于失去」。而不选的代价是隐形的：每一样都只尝到入门的那点甜头，没有哪个有机会长成你的代表作。",
+  gift:"你的学习速度和跨界联想是真天赋。等你有了一根主干，那些「会一点」的东西，都会变成别人没有的枝叶。",
+  tips:["不用选一辈子，只选这一季。接下来九十天挑一样当主线，其余的降级为消遣。",
+        "用这个问题来挑：哪一件，就算做得很烂你也愿意继续做？",
+        "给其他兴趣建一张「停车场」清单。写下来，它们只是在排队，没有被放弃。"],
+  quote:"选一个，是让其中一个你终于有机会长大。",
+  sec:"你手里抓的东西有点多，力气被分散了。给主线多留一点，别的先排队。",
+  pass:"你舍得放下别的，只抓一件。"},
+
+D:{no:7,gate:"完成",name:"草稿箱钉子户",a:"#44615A",o1:"#B4C6C0",o2:"#DADFD4",
+  tag:"作品都住在草稿箱里，因为还差一点。",
+  p:["你其实做了很多，只是它们大多停在 90%：再改一版，再打磨一下，再等一个更好的想法。你的标准很高，高到你自己都过不了关。",
+     "最磨人的是快做完的那一刻。你会突然看见所有毛病，觉得整个东西都不行，然后要么推倒重来，要么搁在那里。对你来说，没做完可以接受，做完了但不够好才是真正的难堪。"],
+  m:["一条消息、一条朋友圈，能删改十几遍。",
+     "总在截止前一刻才交。你没有拖，你一直在改。",
+     "别人眼里已经很好的东西，你只看得见那一处瑕疵。"],
+  root:"你把作品当成了对自己的判决。只要不交出去，它就永远「有可能很好」，你也不必面对「也就这样」。这份完美主义，护着的其实是你自己。",
+  gift:"你的审美和标准，是天赋里最难教的部分。眼比手高，说明手还有很大的成长空间，只要你肯让它交几份不那么好的作业。",
+  tips:["动手前先写下「完成线」。到线就交，之后的修改一律算下一版。",
+        "这周故意交出一件七十分的东西，然后看看：天塌了吗？",
+        "把「这够好了吗」换成「这能帮到一个人吗」。后一个问题更容易答「能」。"],
+  quote:"交出去的七十分，比草稿箱里的一百分多一个读者。",
+  sec:"你的标准很高，很难痛快地交出点什么。差不多的时候，先交，再改。",
+  pass:"你交得出手，不被「还差一点」拖住。"},
+
+I:{no:8,gate:"亮相",name:"隐身斗篷",a:"#665488",o1:"#C9BFD8",o2:"#DDD8E6",
+  tag:"东西做出来了，人还躲在斗篷里。",
+  p:["你一直在做。你写，你画，你琢磨，只是都在没人看得到的地方。发出去的念头有过，但一想到会被看、被评、被议论，或者更糟，根本没人理，手就缩了回来。",
+     "于是你成了一个很安静的创作者。没有差评，也没有掌声。很安全，也意味着没有人有机会告诉你：你其实很好。"],
+  m:["发过，又悄悄设成仅自己可见，或者过一会儿就删了。",
+     "用小号、匿名、不露脸，才敢发真东西。",
+     "开会时想到的点子没说，被别人说出来，得到了夸奖。"],
+  root:"你把「被看见」和「被审判」绑在了一起。可天赋需要回声来校准，没有反馈，你既不知道自己好在哪，也不会相信自己好。躲掉差评的同时，确认也一起躲掉了。",
+  gift:"没人鼓掌你还在做，说明这份喜欢是真的。这种内驱力，很多活在掌声里的人没有。",
+  tips:["先选一个人。这周把一样东西，只发给一个你信得过的人看。",
+        "发出去之后立刻去做别的事，二十四小时内不看反应。",
+        "备一本「证据本」。别人说过的每一句真心的肯定，原话抄下来。"],
+  quote:"你躲开了所有可能的差评，也躲开了本该属于你的认可。",
+  sec:"你做了也不太想让人知道，所以很少得到回应。没有回应，就很难确认自己走对了。",
+  pass:"你不怕被看见，愿意把东西摆出来。"},
+
+T:{no:9,gate:"站稳",name:"望远镜星人",a:"#2C4BAA",o1:"#8FA8E8",o2:"#F2DE9A",
+  tag:"镜头一直对着别人，自己这块地还没来得及种。",
+  p:["别人走到哪了，你了如指掌：谁升职了，谁涨粉了，谁才开始半年就做出了成绩。你管这叫了解行情，可每看一次，心里那点火就小一圈。",
+     "最伤的是那一下换算：他都那么好了，我做还有什么意义。你拿别人的第三年，比自己的第三天，然后判自己出局。"],
+  m:["本来兴致勃勃，刷到一个大神，当场泄气。",
+     "朋友的好消息，你真心祝福，也要缓上半天。",
+     "做事时总想偷看「参考答案」，越看越不敢下笔。"],
+  root:"你把天赋理解成了一场排名。其实天赋说的是：这件事你做起来，比做别的顺。眼睛全在别人身上的时候，你就没有注意力留给自己那点刚冒头、还很弱的「顺」。",
+  gift:"你一眼能看出什么是好的、好在哪里。这种鉴别力，进步最快的人才有。镜头转过来，它就是你最好的教练。",
+  tips:["给「看别人」设个顺序：动手之前不看，做完之后再看。",
+        "只跟一个人比：上个月的自己。每月留一份存档，下个月拿出来对照。",
+        "把让你泄气的账号先静音三十天。这不算认输，是给幼苗搭个棚。"],
+  quote:"你拿别人的高光，比自己的幕后。这场比赛从一开始就不公平。",
+  sec:"你看别人看得有点多。每多看一眼，对自己的信心就少一点。",
+  pass:"别人走多快，不太能动摇你。"},
+
+Z:{no:10,gate:"认领",name:"五折店长",a:"#BE4226",o1:"#F5A08C",o2:"#F8D2B8",
+  tag:"明明是好东西，你非要先给它贴上打折标签。",
+  p:["你其实已经走得很远了。你有做得来的事，也有人认可过。但在你心里它们统统不算数：「这个谁都会」「只是运气好」「没什么特别的」。",
+     "你对别人的优点很慷慨，对自己的却格外苛刻。有一条你从没检查过的规则一直在运转：凡是我做起来不费劲的，就一定不值钱。于是你一直在找一个更厉害的天赋，对手里这个视而不见。"],
+  m:["被夸的第一反应是否认，第二反应是赶紧夸回去。",
+     "报价、谈薪、自我介绍，总是自己先往下砍一刀。",
+     "顺手帮人解决了难题，对方连声道谢，你觉得「这有什么」。"],
+  root:"「不费劲」恰恰是天赋最典型的手感。你把它当成了没含金量的证据，所以它就摆在面前，你还在别处找。你卡在最后一步：认领。",
+  gift:"你已经有了，这句话不是安慰。谦逊让你一直在进步，而现在该做的，是把那张五折标签撕下来。",
+  tips:["列一张「别人常来找我帮忙的事」。有人反复来求助，就说明它值钱。",
+        "下次被夸，只说两个字：谢谢。不解释，不打折。",
+        "问三个熟悉你的人：「你觉得我哪件事做得比大多数人轻松？」把答案原样记下。"],
+  quote:"你一直在找的那个天赋，很可能就是你一直看不上的这个。",
+  sec:"就算做到了，你也不太认账。别人的肯定到你这里，总要先打个折。",
+  pass:"你认自己的本事，不乱打折。"}
+};
+
+var QS = [
+/* 第一章 很小的时刻 */
+{q:"周末下午，难得什么安排都没有。阳光照进来，手机就在手边。接下来的三个小时，你最可能怎么过？",o:[
+  ["躺着刷手机。想做点什么，但真的提不起劲。","L"],
+  ["打开收藏夹，把存了很久的教程又整理了一遍。","C"],
+  ["同时开了三件事，每件都碰了一下。","O"],
+  ["想了很久「我到底想做什么」，然后天就黑了。","S"]]},
+{q:"你刷到一个人在做一件让你心里一动的事：剪视频、画画、写东西，或者别的什么。你的下一步通常是？",o:[
+  ["先搜「零基础入门」，把最全的教程存下来。","C"],
+  ["当晚就下单了全套装备，热血沸腾。","F"],
+  ["等忙完这阵、状态好一点，再正式开始。","W"],
+  ["点进主页一看：人家已经做了三年。算了。","T"]]},
+{q:"打开手机里那个「以后一定会看」的地方：收藏夹、稍后再看、已购课程。它现在是什么样子？",o:[
+  ["很长，而且我还在不停往里加。","C"],
+  ["方向五花八门，像十个不同的人存的。","O"],
+  ["很多是别人的成果，越看越觉得自己差得远。","T"],
+  ["没存多少。我好像对什么都没有特别想要。","S"]]},
+{q:"饭桌上，有人随口问你：「你到底喜欢什么呀？」你会怎么答？",o:[
+  ["脑子空了一下，然后说了个听起来比较体面的答案。","S"],
+  ["一口气能说出七八个，但没有一个算「最」。","O"],
+  ["说了一个，又马上补一句「也就随便玩玩」。","Z"],
+  ["说了一件喜欢很久、但还没真正开始的事。","W"]]},
+{q:"朋友看了你做的东西，很认真地说：「这个真的做得很好。」你心里冒出的第一句话是？",o:[
+  ["「没有没有，这个谁都会。」","Z"],
+  ["「其实还有好几处没弄好。」","D"],
+  ["「被注意到了，有点想躲。」","I"],
+  ["「跟某某比，我这算什么。」","T"]]},
+{q:"深夜，你突然很有干劲，决定「从明天开始不一样」。到了第二天呢？",o:[
+  ["闹钟响了，身体像被掏空。算了，改天。","L"],
+  ["真的开始了，而且坚持了三四天。","F"],
+  ["花了一上午，做了一份很漂亮的计划表。","W"],
+  ["先去搜「别人是怎么做的」，一直搜到中午。","C"]]},
+{q:"朋友圈里，同龄人发了好消息：升职、上岸、作品被看见。放下手机之后，你会？",o:[
+  ["接下来半天，什么都不想做了。","T"],
+  ["心想「等我准备好了，我也可以」，然后继续等。","W"],
+  ["没什么波动。反正我做的东西也不打算给人看。","I"],
+  ["说不上羡慕。我也不知道自己想要的是哪一种。","S"]]},
+{q:"假如明天起，你凭空多出三个月，不用上班上学，钱也够用。你猜自己会怎么过？",o:[
+  ["先睡够两个星期再说。","L"],
+  ["报三个班、买一堆书，认真「充电」。","C"],
+  ["前两周冲得很猛，后面就不好说了。","F"],
+  ["一边做，一边忍不住看别人的进度，越看越慌。","T"]]},
+/* 第二章 差一点的事 */
+{q:"你的电脑或手机里，有一个做了一半的东西：一篇稿子、一个作品、一个计划。它停在那里，是因为？",o:[
+  ["改了很多版，总觉得还差一点，拿不出手。","D"],
+  ["新鲜劲过了，被另一个更有意思的想法顶替了。","F"],
+  ["其实做完了，只是一直没给任何人看。","I"],
+  ["一直想继续，可每天回到家只想瘫着。","L"]]},
+{q:"一件事做到第三周。最容易让你停下来的是？",o:[
+  ["没有一开始那么好玩了。","F"],
+  ["发现自己做得没想象中好，干脆不想碰了。","D"],
+  ["别的事一忙，就再也没捡起来。","L"],
+  ["看到别人三周的成果，比我好太多。","T"]]},
+{q:"现在，你必须把一件自己的作品发到公开平台。整个过程里，你最卡的是哪一步？",o:[
+  ["按下发布之前，反复改到凌晨。","D"],
+  ["发是发了，但很快设成仅自己可见，或者删了。","I"],
+  ["觉得这点东西没什么好发的，不值得占别人时间。","Z"],
+  ["还没准备好。等我再充分一点再发。","W"]]},
+{q:"一个机会找上门：一次分享、一个合作、一场比赛，需要你站到前面去。你的反应是？",o:[
+  ["「我还不够格吧。」先在心里把自己否了。","Z"],
+  ["想去，可一想到要被那么多人看着，就想推掉。","I"],
+  ["答应了，然后因为准备得不够完美，焦虑到睡不着。","D"],
+  ["想答应，但光是想想要花的精力，就已经累了。","L"]]},
+{q:"其实有一件事，你做起来比身边的人都轻松。你对它的态度是？",o:[
+  ["「这也算本事？不就是顺手的事。」","Z"],
+  ["有，但我只在没人看见的时候做。","I"],
+  ["有好几件，所以更不知道该选哪件。","O"],
+  ["有，但想等做到拿得出手再说。","D"]]},
+{q:"关于「找到天赋」这件事，你心里最真实的想法更接近哪一个？",o:[
+  ["等我遇到那件对的事，自然就知道了。","W"],
+  ["我好像没有特别想要的东西。","S"],
+  ["我有很多可能，只是还没决定是哪一个。","O"],
+  ["我会的那些都太普通了，算不上天赋。","Z"]]},
+{q:"回头看过去这一年，你最想对自己说的一句是？",o:[
+  ["「你开了好多头啊。」","F"],
+  ["「你学了好多，但好像没做出什么。」","C"],
+  ["「你什么都试了一点，哪个都没扎下去。」","O"],
+  ["「你一直在忙别人希望你做的事。」","S"]]},
+/* 第三章 没说出口的话 */
+{t:"我开始一件事的速度，远远快过我做完一件事的速度。",d:"F"},
+{t:"我做得来的事，我会默认大家都做得来。",d:"Z"},
+{t:"我总觉得现在还不是时候，要等某件事过去，才能真正开始。",d:"W"},
+{t:"「做完了但不够好」，比「没做完」更让我难受。",d:"D"},
+{t:"我很清楚别人希望我成为什么样，却说不清自己想成为什么样。",d:"S"},
+{t:"我花在看别人进度上的时间，可能比花在自己事情上的还多。",d:"T"},
+{t:"买课、存教程、做笔记的那一刻，我会有一种「已经在进步了」的安心。",d:"C"},
+{t:"每天把该做的做完，我就没有一点力气留给自己了。",d:"L"},
+{t:"我宁愿没人知道我在做什么，也不想做了之后被人评价。",d:"I"},
+{t:"让我只选一个方向，我会有种「其他的都失去了」的难受。",d:"O"},
+/* 第四章 再往里一点 */
+{t:"别人夸我，我的第一反应是找理由证明「其实没那么好」。",d:"Z"},
+{t:"这件事我在脑子里已经完整做过很多遍了，现实里还没动。",d:"W"},
+{t:"一件事一旦变得重复、需要硬熬，我就会想「也许它不适合我」。",d:"F"},
+{t:"被问「你想要什么」的时候，我会下意识去想哪个答案比较对。",d:"S"},
+{t:"快完成的时候，我常常突然觉得整个东西都不行，想推倒重来。",d:"D"},
+{t:"一发现有人比我做得好，我就会觉得「那我做还有什么意义」。",d:"T"},
+{t:"我的休息常常算不上休息，只是累到动不了。",d:"L"},
+{t:"我总觉得自己还没学够，再多看一点才敢动手。",d:"C"},
+{t:"发出去的东西如果没人回应，我会难受很久，甚至想删掉。",d:"I"},
+{t:"很多事我都能很快做到七十分，但没有一件做到过九十分。",d:"O"}
+];
+
+var CH = [
+{no:"第一章",title:"很小的时刻",from:0,to:8,scene:"day",
+ lead:"先从最普通的日子开始。下面这些场景，你大概都经历过。选「其实是这样」的那个，别选「应该是这样」的。"},
+{no:"第二章",title:"差一点的事",from:8,to:15,scene:"dusk",
+ lead:"你一定有过这种时候：只差一点就开始了，只差一点就做完了，只差一点就发出去了。我们去那里看看。"},
+{no:"第三章",title:"没说出口的话",from:15,to:25,scene:"night",
+ lead:"接下来不再是场景，是一些句子。很多人在心里说过，没对任何人讲过。看看哪些也是你的。"},
+{no:"第四章",title:"再往里一点",from:25,to:35,scene:"deep",
+ lead:"最后十句。轮廓已经差不多了，越往后，请越诚实。"}
+];
+
+/* Each gate can earn 6 scenario picks (x2) and two statements (0-4 each): 20 points. */
+function compute(ans){
+  var sc={},st={},total={},pct={};
+  GATES.forEach(function(k){sc[k]=0;st[k]=0;});
+  QS.forEach(function(q,i){
+    var a=ans[i]; if(a===null||a===undefined) return;
+    if(q.o) sc[q.o[a][1]]+=1; else st[q.d]+=a;
+  });
+  GATES.forEach(function(k){total[k]=sc[k]*2+st[k];pct[k]=Math.round(total[k]/20*100);});
+  var order=GATES.slice().sort(function(a,b){
+    return total[b]-total[a]||st[b]-st[a]||sc[b]-sc[a]||GATES.indexOf(a)-GATES.indexOf(b);
+  });
+  return {total:total,pct:pct,order:order,main:order[0],sec:order[1],low:order[9]};
+}
+function level(p){
+  if(p>=70) return {label:"卡得很深",text:"这道关你站了很久，久到它有时像是性格的一部分。越是这样，一点点松动带来的变化越明显。"};
+  if(p>=45) return {label:"卡得正紧",text:"这道关你已经站了一阵子。你对它很熟，熟到常常注意不到它在。"};
+  return {label:"已经在松动",text:"你的卡点不算重。很多题你答得很轻，这道关你已经半只脚迈过去了。"};
+}
+</script>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var KEY="kadian-v1";
+var LIKERT=["完全不像我","不太像我","有一点像","挺像我的","这就是我"];
+var SIZES=[18,24,30,37,44];
+var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var S=fresh(), R=null, locked=false;
+
+function fresh(){
+  return {name:"",answers:QS.map(function(){return null;}),perm:QS.map(function(q){return q.o?shuffle([0,1,2,3]):null;}),idx:0,phase:"intro",done:false};
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function valid(d){return d&&Array.isArray(d.answers)&&d.answers.length===QS.length&&Array.isArray(d.perm)&&d.perm.length===QS.length;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem(KEY));return valid(d)?d:null;}catch(e){return null;}}
+function wipe(){try{localStorage.removeItem(KEY);}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function today(){var d=new Date();function p(n){return (n<10?"0":"")+n;}return d.getFullYear()+"."+p(d.getMonth()+1)+"."+p(d.getDate());}
+function chapterOf(i){for(var c=0;c<CH.length;c++){if(i>=CH[c].from&&i<CH[c].to) return c;}return CH.length-1;}
+
+function show(id,scene){
+  var all=document.querySelectorAll(".view");
+  for(var i=0;i<all.length;i++) all[i].classList.remove("on","anim");
+  var v=$(id); v.classList.add("on","anim");
+  if(scene) document.body.dataset.scene=scene;
+  if(scene!=="dawn"){var b=document.body.style;b.removeProperty("--orb1");b.removeProperty("--orb2");b.removeProperty("--accent");}
+  window.scrollTo(0,0);
+}
+
+/* ---------- staircase ---------- */
+function stair(o){
+  var m=o.main,sw=30,rise=11,base=128,i;
+  function Y(n){return base-n*rise;}
+  var w="M0,"+Y(0);
+  for(i=0;i<=m;i++){w+=" H"+(i+1)*sw;if(i<m) w+=" V"+Y(i+1);}
+  var a="";
+  if(m<9){a="M"+(m+1)*sw+","+Y(m);for(i=m+1;i<=9;i++){a+=" V"+Y(i)+" H"+(i+1)*sw;}}
+  var cx=m*sw+sw/2,cy=Y(m)-9;
+  var s='<svg viewBox="0 0 300 136" role="img" aria-label="'+esc(o.label||"")+'">';
+  if(a) s+='<path class="st-ahead" d="'+a+'"/>';
+  s+='<path class="st-walk" d="'+w+'"/><path class="st-main" d="M'+(m*sw)+","+Y(m)+" H"+(m+1)*sw+'"/>';
+  if(o.sec>=0) s+='<circle class="st-sec" cx="'+(o.sec*sw+sw/2)+'" cy="'+(Y(o.sec)-8)+'" r="4"/>';
+  s+='<g class="'+(o.hop?"hop":"")+'"><circle class="st-halo" cx="'+cx+'" cy="'+cy+'" r="10"/><circle class="st-dot" cx="'+cx+'" cy="'+cy+'" r="5"/></g></svg>';
+  if(o.labels){
+    s+='<div class="gates" aria-hidden="true">'+GATES.map(function(k,n){
+      return '<span class="'+(n===m?"is-main":n===o.sec?"is-sec":"")+'"><i>'+(n+1)+"</i><b>"+T[k].gate+"</b></span>";
+    }).join("")+"</div>";
+  }
+  return s;
+}
+
+/* ---------- intro ---------- */
+function showIntro(){
+  S.phase="intro";
+  $("#introStair").innerHTML=stair({main:3,sec:-1,hop:true,label:"十级台阶，一个小圆点停在第四级，一次次想跳上去又落回来"});
+  var saved=load(),rb=$("#resumeBtn");
+  if(saved&&saved.done){rb.hidden=false;rb.textContent="查看上次的结果";}
+  else if(saved&&saved.answers.some(function(a){return a!==null;})){rb.hidden=false;rb.textContent="接着上次的第 "+(saved.idx+1)+" 题继续";}
+  else rb.hidden=true;
+  show("#v-intro","day");
+}
+$("#startForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var n=$("#nick").value.trim().slice(0,12);
+  S=fresh();S.name=n;save();
+  showChapter(0);
+});
+$("#resumeBtn").addEventListener("click",function(){
+  var d=load(); if(!d) return;
+  S=d;
+  if(S.done) showResult(); else renderQ();
+});
+
+/* ---------- chapters ---------- */
+function showChapter(ci){
+  var c=CH[ci];S.phase="chapter";
+  $("#chNo").textContent=c.no;
+  $("#chTitle").textContent=c.title;
+  $("#chLead").textContent=c.lead;
+  $("#chMeta").textContent="这一章 "+(c.to-c.from)+" 题";
+  show("#v-chapter",c.scene);
+  save();
+}
+$("#chGo").addEventListener("click",function(){renderQ();});
+
+/* ---------- questions ---------- */
+function el(tag,cls,text){var e=document.createElement(tag);if(cls) e.className=cls;if(text!==undefined) e.textContent=text;return e;}
+function renderQ(){
+  var i=S.idx,q=QS[i],c=CH[chapterOf(i)],body=$("#qBody");
+  S.phase="quiz";locked=false;
+  if(!$("#v-quiz").classList.contains("on")) show("#v-quiz",c.scene); else {document.body.dataset.scene=c.scene;window.scrollTo(0,0);}
+  $("#qNow").textContent=i+1;
+  $("#qAll").textContent=QS.length;
+  $("#trackFill").style.width=(i/QS.length*100)+"%";
+  $("#qCh").textContent=c.no+"　"+c.title;
+  $("#backBtn").disabled=(i===0);
+  body.innerHTML="";
+  if(q.o){
+    body.appendChild(el("h2","q-text",q.q));
+    var box=el("div","opts");
+    S.perm[i].forEach(function(oi){
+      var b=el("button","opt"+(S.answers[i]===oi?" picked":""),q.o[oi][0]);
+      b.type="button";
+      b.addEventListener("click",function(){pick(oi,b);});
+      box.appendChild(b);
+    });
+    body.appendChild(box);
+  }else{
+    body.appendChild(el("p","q-hint","这句话有多像你"));
+    body.appendChild(el("h2","q-say",q.t));
+    var sc=el("div","scale");sc.setAttribute("role","radiogroup");sc.setAttribute("aria-label","这句话有多像你");
+    var now=el("p","scale-now",S.answers[i]!==null?LIKERT[S.answers[i]]:" ");
+    LIKERT.forEach(function(lab,v){
+      var b=el("button","dot"+(S.answers[i]===v?" picked":""));
+      b.type="button";b.setAttribute("role","radio");b.setAttribute("aria-label",lab);
+      b.setAttribute("aria-checked",S.answers[i]===v?"true":"false");
+      var d=document.createElement("i");d.style.setProperty("--s",SIZES[v]+"px");b.appendChild(d);
+      b.addEventListener("click",function(){now.textContent=lab;pick(v,b);});
+      sc.appendChild(b);
+    });
+    body.appendChild(sc);
+    var ends=el("div","scale-ends");ends.appendChild(el("span","",LIKERT[0]));ends.appendChild(el("span","",LIKERT[4]));
+    body.appendChild(ends);
+    body.appendChild(now);
+  }
+  body.classList.remove("swap");void body.offsetWidth;body.classList.add("swap");
+}
+function pick(v,btn){
+  if(locked) return; locked=true;
+  var sib=btn.parentNode.children;
+  for(var k=0;k<sib.length;k++){sib[k].classList.remove("picked");if(sib[k].hasAttribute("aria-checked")) sib[k].setAttribute("aria-checked","false");}
+  btn.classList.add("picked");if(btn.hasAttribute("aria-checked")) btn.setAttribute("aria-checked","true");
+  S.answers[S.idx]=v;save();
+  setTimeout(next,reduced?120:330);
+}
+function next(){
+  S.idx+=1;
+  if(S.idx>=QS.length){S.idx=QS.length-1;analyze();return;}
+  var ci=chapterOf(S.idx);
+  if(S.idx===CH[ci].from) showChapter(ci); else {renderQ();save();}
+}
+$("#backBtn").addEventListener("click",function(){
+  if(locked||S.idx===0) return;
+  S.idx-=1;save();renderQ();
+});
+
+/* ---------- analysing ---------- */
+function analyze(){
+  S.phase="analyze";
+  show("#v-analyze","deep");
+  var li=document.querySelectorAll("#v-analyze li"),step=reduced?260:1000;
+  for(var k=0;k<li.length;k++) li[k].classList.remove("on");
+  Array.prototype.forEach.call(li,function(l,n){setTimeout(function(){l.classList.add("on");},200+step*n);});
+  setTimeout(function(){S.done=true;save();showResult();},400+step*li.length);
+}
+
+/* ---------- result ---------- */
+function showResult(){S.done=true;S.phase="result";R=compute(S.answers);render(R.main,false);}
+function sec(title,html,cls){return '<section class="sec'+(cls?" "+cls:"")+'"><h3>'+title+"</h3>"+html+"</section>";}
+function render(k,browse){
+  var t=T[k],mine=!browse,s2=T[R.sec],low=T[R.low],lv=level(R.pct[R.main]),b=document.body.style,h="";
+  if(browse) h+='<div class="peek"><span>你在看别的类型</span><button class="link" type="button" data-act="mine">回到我的结果</button></div>';
+  h+="<header>";
+  h+='<p class="who"><span>'+(mine?(S.name?esc(S.name)+" 的卡点报告":"你的卡点报告"):"卡点类型")+"</span><span>"+(mine?today():"")+"</span></p>";
+  h+='<p class="r-gate">'+(mine?"你卡在":"卡在")+"第 "+t.no+" 关「"+t.gate+"」</p>";
+  h+='<h1 class="r-name">'+t.name+"</h1>";
+  h+='<p class="r-tag">'+t.tag+"</p>";
+  if(mine) h+='<p class="r-level"><b>卡住程度 '+R.pct[k]+"%</b><span>"+lv.label+"</span></p>";
+  h+="</header>";
+  h+='<div class="stair">'+stair({main:t.no-1,sec:mine?s2.no-1:-1,labels:true,label:"十道关的台阶图，圆点停在第 "+t.no+" 关「"+t.gate+"」"})+"</div>";
+  if(mine){
+    h+='<p class="legend"><span><i></i>主卡点</span><span><i class="ring"></i>副卡点</span></p>';
+    h+='<p class="lv-text">'+lv.text+"</p>";
+  }
+  h+=sec("画像",t.p.map(function(x){return "<p>"+x+"</p>";}).join(""));
+  h+=sec("你大概经历过",'<ul class="rows">'+t.m.map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul>");
+  h+=sec("真正卡住你的","<p>"+t.root+"</p>","root");
+  h+=sec("被卡住的那份天赋","<p>"+t.gift+"</p>");
+  if(mine){
+    var close=R.total[R.sec]>=R.total[R.main]*0.85;
+    h+=sec("你的副卡点",'<p class="sub-name">第 '+s2.no+" 关「"+s2.gate+"」<b>"+s2.name+"</b></p><p>"+s2.sec+"</p>"+
+      (close?"<p>这两处几乎一样重。它们常常互相打掩护：一个松了，另一个会顶上来，所以要一起看。</p>":""));
+    h+=sec("十道关，你各卡了多少",'<div class="bars">'+GATES.map(function(g){
+      var x=T[g],p=R.pct[g];
+      return '<div class="bar-row'+(g===k?" main":"")+'"><span>'+x.no+"</span><span>"+x.gate+'</span><div class="bar"><i style="width:'+Math.max(p,3)+'%"></i></div><span>'+p+"</span></div>";
+    }).join("")+"</div>"+'<p class="pass">你最顺的是第 '+low.no+" 关「"+low.gate+"」。"+low.pass+"</p>");
+  }
+  h+=sec("过关提示",'<ul class="rows">'+t.tips.map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul>"+(t.note?'<p class="note">'+t.note+"</p>":""));
+  h+='<blockquote class="quote">'+t.quote+"</blockquote>";
+  if(mine){
+    h+='<div class="actions"><button class="btn" type="button" data-act="card">生成结果卡片</button><button class="btn ghost" type="button" data-act="restart">重新测试</button></div>';
+  }
+  h+=sec(mine?"另外九种卡点":"全部十种卡点",'<p>每一道关前面都站着很多人。点开看看，也许能认出身边的谁。</p><div class="others">'+
+    GATES.filter(function(g){return !(mine&&g===k);}).map(function(g){
+      var x=T[g];
+      return '<button class="other" type="button" data-act="peek" data-k="'+g+'"><em>第 '+x.no+" 关「"+x.gate+"」"+(g===R.main?"　你的主卡点":"")+"</em><b>"+x.name+"</b><small>"+x.tag+"</small></button>";
+    }).join("")+"</div>");
+  h+='<p class="fine">这是一份帮你看清自己的趣味测试，不是专业心理测评，结果不构成任何诊断。你的回答只保存在自己的浏览器里。</p>';
+  $("#v-result").innerHTML=h;
+  show("#v-result","dawn");
+  b.setProperty("--orb1",t.o1);b.setProperty("--orb2",t.o2);b.setProperty("--accent",t.a);
+}
+var armed=0;
+$("#v-result").addEventListener("click",function(e){
+  var btn=e.target.closest("[data-act]"); if(!btn) return;
+  var act=btn.getAttribute("data-act");
+  if(act==="peek"){var g=btn.getAttribute("data-k");render(g,g!==R.main);}
+  else if(act==="mine") render(R.main,false);
+  else if(act==="card") makeCard(btn);
+  else if(act==="restart"){
+    if(Date.now()-armed<4000){wipe();S=fresh();R=null;$("#nick").value="";showIntro();}
+    else{armed=Date.now();btn.textContent="再点一次，清空这次的结果";setTimeout(function(){if(btn.isConnected) btn.textContent="重新测试";},4000);}
+  }
+});
+
+/* ---------- result card (1080 x 1440, the 3:4 the feed uses) ---------- */
+function hexA(h,a){var n=parseInt(h.slice(1),16);return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")";}
+function wrapText(x,text,maxW){
+  var out=[],line="",stay="，。、；：？！」』）%";
+  Array.from(text).forEach(function(ch){
+    if(x.measureText(line+ch).width>maxW&&line&&stay.indexOf(ch)<0){out.push(line);line=ch;}else line+=ch;
+  });
+  if(line) out.push(line);
+  return out;
+}
+function balanced(x,text,maxW){
+  var best=wrapText(x,text,maxW),n=best.length,w=maxW,t;
+  if(n<2) return best;
+  while(w>maxW*0.55){w-=20;t=wrapText(x,text,w);if(t.length>n) break;best=t;}
+  return best;
+}
+function makeCard(btn){
+  var old=btn.textContent;btn.textContent="正在生成";
+  var t=T[R.main];
+  var wait=(document.fonts&&document.fonts.load)?Promise.race([
+    document.fonts.load('900 100px "Noto Serif SC"',t.name+"你不是没天赋，卡在这一步"),
+    new Promise(function(r){setTimeout(r,1500);})
+  ]).catch(function(){}):Promise.resolve();
+  wait.then(function(){
+    try{$("#cardImg").src=drawCard();$("#sheet").hidden=false;$("#sheetClose").focus();}
+    catch(e){btn.textContent="这台设备生成不了图片，直接截图也可以";return;}
+    btn.textContent=old;
+  });
+}
+function drawCard(){
+  var t=T[R.main],s2=T[R.sec],W=1080,H=1440,P=84;
+  var c=document.createElement("canvas");c.width=W;c.height=H;
+  var x=c.getContext("2d");
+  var DISP='"Noto Serif SC","Songti SC","STSong","Noto Serif CJK SC","SimSun",serif';
+  var READ='"Songti SC","STSong","Noto Serif CJK SC","SimSun",serif';
+  var UI='-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+  var ink="#161A2B",soft="#4C5266",fs,y,i;
+  x.fillStyle="#F2F1EE";x.fillRect(0,0,W,H);
+  [[W,0,980,t.o1],[0,H,1060,t.o2]].forEach(function(o){
+    var g=x.createRadialGradient(o[0],o[1],0,o[0],o[1],o[2]);
+    g.addColorStop(0,hexA(o[3],.95));g.addColorStop(1,hexA(o[3],0));
+    x.fillStyle=g;x.fillRect(0,0,W,H);
+  });
+  x.textBaseline="alphabetic";
+  x.fillStyle=soft;x.font="500 32px "+UI;
+  x.textAlign="left";x.fillText("天赋卡点测试",P,124);
+  x.textAlign="right";x.fillText(today(),W-P,124);
+  x.textAlign="left";
+  var who=(S.name||"我")+"卡在第 "+t.no+" 关「"+t.gate+"」";
+  for(fs=46;fs>30;fs-=2){x.font="600 "+fs+"px "+READ;if(x.measureText(who).width<=W-P*2) break;}
+  x.fillStyle=ink;x.fillText(who,P,262);
+  for(fs=170;fs>90;fs-=6){x.font="900 "+fs+"px "+DISP;if(x.measureText(t.name).width<=W-P*2) break;}
+  x.fillStyle=t.a;x.fillText(t.name,P-4,300+fs*0.94);
+  y=300+fs+96;
+  x.fillStyle=ink;x.font="400 40px "+READ;
+  balanced(x,t.tag,W-P*2).forEach(function(l){x.fillText(l,P,y);y+=62;});
+  /* staircase */
+  var k=2.8,sw=30*k,rise=11*k,m=t.no-1,top=y+64;
+  function X(n){return P+n*sw;}
+  function Y(n){return top+(9-n)*rise;}
+  x.lineJoin="round";
+  if(m<9){
+    x.beginPath();x.moveTo(X(m+1),Y(m));
+    for(i=m+1;i<=9;i++){x.lineTo(X(i),Y(i));x.lineTo(X(i+1),Y(i));}
+    x.setLineDash([9,11]);x.lineWidth=3;x.strokeStyle="rgba(22,26,43,.4)";x.stroke();x.setLineDash([]);
+  }
+  x.beginPath();x.moveTo(X(0),Y(0));
+  for(i=0;i<=m;i++){x.lineTo(X(i+1),Y(i));if(i<m) x.lineTo(X(i+1),Y(i+1));}
+  x.lineWidth=4;x.strokeStyle=ink;x.stroke();
+  x.beginPath();x.moveTo(X(m),Y(m));x.lineTo(X(m+1),Y(m));x.lineWidth=9;x.lineCap="round";x.strokeStyle=t.a;x.stroke();x.lineCap="butt";
+  x.fillStyle="rgba(240,160,32,.26)";x.beginPath();x.arc(X(m)+sw/2,Y(m)-26,28,0,Math.PI*2);x.fill();
+  x.fillStyle="#F0A020";x.beginPath();x.arc(X(m)+sw/2,Y(m)-26,14,0,Math.PI*2);x.fill();
+  /* quote */
+  y=top+9*rise+112;
+  x.font="600 44px "+READ;
+  var lines=balanced(x,t.quote,W-P*2-40);
+  x.fillStyle=t.a;x.fillRect(P,y-44,6,(lines.length-1)*68+58);
+  x.fillStyle=ink;
+  lines.forEach(function(l){x.fillText(l,P+34,y);y+=68;});
+  /* footer */
+  x.fillStyle="rgba(22,26,43,.2)";x.fillRect(P,1256,W-P*2,2);
+  x.fillStyle=soft;x.font="500 30px "+UI;
+  x.fillText("副卡点　"+s2.name,P,1312);
+  x.textAlign="right";x.fillText("卡住程度 "+R.pct[R.main]+"%",W-P,1312);x.textAlign="left";
+  x.fillStyle=ink;x.font="900 40px "+DISP;
+  x.fillText("你不是没天赋，你是卡在这一步",P,1380);
+  return c.toDataURL("image/png");
+}
+$("#sheetClose").addEventListener("click",function(){$("#sheet").hidden=true;});
+$("#sheet").addEventListener("click",function(e){if(e.target===this) this.hidden=true;});
+document.addEventListener("keydown",function(e){if(e.key==="Escape") $("#sheet").hidden=true;});
+
+/* ---------- boot ---------- */
+function boot(d){
+  if(valid(d)){
+    S=d;
+    if(S.phase==="result"||S.phase==="analyze") return showResult();
+    if(S.phase==="quiz") return renderQ();
+    if(S.phase==="chapter") return showChapter(chapterOf(S.idx));
+  }
+  showIntro();
+}
+var hot=window.claude&&window.claude.hot;
+if(hot&&hot.snapshot) hot.snapshot(function(){return S;});
+if(hot&&hot.ready) hot.ready(boot); else boot((hot&&hot.data)||{});
+})();
+</script>
+</body>
+</html>
